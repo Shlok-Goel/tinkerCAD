@@ -1,0 +1,67 @@
+//pins
+const int GAS_SENSOR= A1;
+const int TEMP =A0;
+const int BUZZER= 10;
+const int SWITCH=2;
+const int LED=13;
+
+float TEMP_THRESH=207;
+float GAS_THRESH=250;
+
+int lastSwitchState;
+
+void setup()
+{
+  pinMode(13, OUTPUT);
+  
+  Serial.begin(9600);
+  
+  lastSwitchState = digitalRead(SWITCH);
+
+}
+
+void loop()
+{
+  AlarmON();
+  int currentSwitchState = digitalRead(SWITCH);
+  if (currentSwitchState != lastSwitchState) {
+    delay(50);
+    if (currentSwitchState != lastSwitchState) {
+      
+    }
+  }
+  lastSwitchState = currentSwitchState;
+  
+  int tempValue=analogRead(TEMP);
+  Serial.println(tempValue);
+}
+
+
+void AlarmON(){
+  
+  //1st flash
+  digitalWrite(LED,HIGH);
+  digitalWrite(BUZZER, HIGH);
+  delay(100);
+  digitalWrite(LED,LOW);
+  digitalWrite(BUZZER, LOW);
+  delay (100);
+  
+  //2nd flash
+  digitalWrite(LED,HIGH);
+  digitalWrite(BUZZER, HIGH);
+  delay(100);
+  digitalWrite(LED,LOW);
+  digitalWrite(BUZZER, LOW);
+  delay (100);
+  
+  //wait
+  delay(600);
+}
+
+void AlarmOFF(){
+  digitalWrite(LED,LOW);
+  digitalWrite(BUZZER,LOW);
+}
+
+
