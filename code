@@ -10,9 +10,12 @@ float GAS_THRESH=250;
 
 int lastSwitchState;
 
+bool alarmIsActive;
+
 void setup()
 {
   pinMode(13, OUTPUT);
+  pinMode(BUZZER,OUTPUT);
   
   Serial.begin(9600);
   
@@ -22,38 +25,58 @@ void setup()
 
 void loop()
 {
-  AlarmON();
   int currentSwitchState = digitalRead(SWITCH);
-  if (currentSwitchState != lastSwitchState) {
-    delay(50);
-    if (currentSwitchState != lastSwitchState) {
-      
-    }
+
+  int tempValue=analogRead(TEMP);
+  int gasValue=analogRead(GAS_SENSOR);
+  
+  if(tempValue>TEMP_THRESH || gasValue>GAS_THRESH)
+  {
+    alarmIsActive=true;  	
   }
+  
+  if(currentSwitchState != lastSwitchState) 
+  	{
+      alarmIsActive=false;
+      Serial.println("Alarm OFF");
+  	}
+  
+  if(alarmIsActive==true){
+    AlarmON();
+    Serial.println("Alarm ON");
+  }else if (alarmIsActive==false){
+    AlarmOFF();
+    Serial.println("Alarm OFF");
+  }
+  
+  
   lastSwitchState = currentSwitchState;
   
-  int tempValue=analogRead(TEMP);
+  Serial.print("Current gas value: ");
+  Serial.println(gasValue);
+  Serial.print("Current temp value: ");
   Serial.println(tempValue);
 }
 
 
+//Alarm functions
 void AlarmON(){
   
   //1st flash
   digitalWrite(LED,HIGH);
   digitalWrite(BUZZER, HIGH);
-  delay(100);
+  delay(200);
   digitalWrite(LED,LOW);
   digitalWrite(BUZZER, LOW);
-  delay (100);
+  delay (150);
   
   //2nd flash
   digitalWrite(LED,HIGH);
   digitalWrite(BUZZER, HIGH);
-  delay(100);
+  delay(200);
   digitalWrite(LED,LOW);
   digitalWrite(BUZZER, LOW);
-  delay (100);
+  delay (150);
   
   //wait
   delay(600);
