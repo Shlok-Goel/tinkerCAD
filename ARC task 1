@@ -1,0 +1,28 @@
+// C++ code
+//
+
+const int LED_PIN=13;
+
+void setup()
+{
+  pinMode(LED_PIN,OUTPUT);
+  delay(1000); //first long wait
+}
+
+void loop()
+{
+  //1st flash
+  digitalWrite(LED_PIN, HIGH);
+  delay(200); 
+  digitalWrite(LED_PIN, LOW);
+  delay(200);
+  
+  //2nd flash
+  digitalWrite(LED_PIN, HIGH);
+  delay(200); 
+  digitalWrite(LED_PIN, LOW);
+  delay(200);
+  
+  //long pause
+  delay(1000);
+}
