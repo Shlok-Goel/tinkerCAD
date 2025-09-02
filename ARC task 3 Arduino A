@@ -1,0 +1,55 @@
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x20, 16, 2); 
+
+const int TEMP_PIN=A0;
+
+void setup()
+{
+  Serial.begin(9600);
+  
+  lcd.begin(16,2);
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0,0);
+  lcd.print("Temperature");
+  lcd.setCursor(6,1);
+  lcd.print("Monitoring");
+  delay(3000);
+}
+
+void loop()
+{
+  int analogValue = analogRead(TEMP_PIN);
+  
+  //calculating temp in calcius
+  float voltage = analogValue * (5.0 / 1023.0);
+  float tempCelsius=(voltage-0.5)*100;
+  
+  lcd.clear();
+  
+  //display temp (in celc)
+  lcd.setCursor(0, 0);
+  lcd.print("TEMP:");
+  lcd.setCursor(6, 0);
+  lcd.print(tempCelsius, 1); // Print with 1 decimal place
+  lcd.print("C");
+  
+  //reactor state
+  if (tempCelsius < 40.0) {
+    lcd.setCursor(0,1);
+    lcd.print("STATE: COOL");
+  } else if (tempCelsius >= 40.0 && tempCelsius < 70.0) {
+	lcd.setCursor(0,1);
+    lcd.print("STATE: NORMAL");
+  } else { 
+    lcd.setCursor(0,1);
+    lcd.print("STATE: CRITICAL");
+  }
+  
+  // Send the temperature data to Arduino B
+  Serial.print("TEMP:");
+  Serial.println(int(tempCelsius));
+  
+  delay(800);
+}
