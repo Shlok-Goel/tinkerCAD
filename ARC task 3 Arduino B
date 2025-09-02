@@ -1,0 +1,63 @@
+//pins
+const int BUZZER=8;
+const int EN_PIN=2;
+const int IN1_PIN=6;
+const int IN2_PIN=5;
+
+void setup()
+{
+  Serial.begin(9600);
+  pinMode(EN_PIN,OUTPUT);
+  pinMode(BUZZER,OUTPUT);
+  
+  digitalWrite(EN_PIN, LOW);
+  digitalWrite(BUZZER, LOW);
+
+}
+
+void loop()
+{
+  if (Serial.available() > 0) {
+    String dataIn = Serial.readStringUntil('\n');
+
+    if (dataIn.startsWith("TEMP:")) {
+      
+      String tempString = dataIn.substring(5);
+      int temperature = tempString.toInt(); 
+     
+      controlFanSpeed(temperature);
+    }
+  }
+
+  delay(10);
+}
+
+void controlFanSpeed(int temp){
+  int fanSpeed;
+
+  if (temp < 40) {
+    fanSpeed = 0; 
+    digitalWrite(BUZZER, LOW);
+    Serial.println("FAN:0,BZ:0");
+
+  } 
+  else if (temp >= 40 && temp < 70) 
+  {    
+    fanSpeed = map(temp, 40, 70, 50, 255);	
+    
+    digitalWrite(BUZZER, LOW);
+    Serial.print("FAN:");
+    Serial.print(fanSpeed);
+    Serial.println(",BZ:0");
+  } 
+  else 
+  {
+    fanSpeed = 255; 
+    digitalWrite(BUZZER,HIGH);
+    Serial.println("FAN:255,BZ:1");
+ 
+  }
+
+  // Control fan speed
+  analogWrite(EN_PIN, fanSpeed);
+}
